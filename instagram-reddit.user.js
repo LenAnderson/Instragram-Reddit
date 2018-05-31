@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         Instagram - Upload to Imgur and Save to Reddit
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/LenAnderson/
+// @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
 // @version      0.4
-// @description  try to take over the world!
-// @author       You
+// @description  Instagram -> Imgur -> Reddit
+// @author       LenAnderson
 // @match        https://www.instagram.com
 // @match        https://www.instagram.com/*
 // @match        https://imgur.com/*
