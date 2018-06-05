@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.4
+// @version      0.5
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -122,7 +122,7 @@
                     img.setAttribute('data-uti', '1');
                 }
             });
-            [].forEach.call(document.querySelectorAll('img._ntjhp, video._ntjhp'), img => {
+            [].forEach.call(document.querySelectorAll('img._7NpAS[srcset]  , video._ntjhp'), img => {
                 if (img.getAttribute('data-uti') == '1') return;
                 let srcset;
                 let type;
@@ -136,11 +136,11 @@
                         type = 'vid';
                         break;
                 }
-                let obtn = document.querySelector('._t848o');
+                let obtn = document.querySelector('.-jHC6');
                 let btn = document.createElement('button');
                 btn.textContent = 'imgur';
                 btn.addEventListener('click', ()=>{
-                    addUpload(type, document.querySelector('._2g7d5.notranslate').textContent.trim(), srcset);
+                    addUpload(type, document.querySelector('.FPmhX.notranslate').textContent.trim(), srcset);
                 });
                 btn.style.position = 'absolute';
                 btn.style.top = '30px';
