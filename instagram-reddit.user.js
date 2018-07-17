@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.5
+// @version      0.6
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -82,7 +82,9 @@
 
     if (location.href.search(/^https:\/\/www\.instagram\.com/i) == 0) {
         let addSaveButtons = () => {
-            [].forEach.call(document.querySelectorAll('article._8Rm4L img[srcset], article._622au img[srcset]'), img => {
+            // feed / profile (images)
+            //[].forEach.call(document.querySelectorAll('article._8Rm4L img[srcset], article._622au img[srcset]'), img => {
+            [].forEach.call(document.querySelectorAll('article._8Rm4L img[srcset], article.M9sTE img[srcset]'), img => {
                 if (img.getAttribute('data-uti')) return;
                 let thing = img.closest('article');
                 if (img && thing) {
@@ -102,7 +104,9 @@
                     img.setAttribute('data-uti', '1');
                 }
             });
+            // feed / profile (videos)
             [].forEach.call(document.querySelectorAll('article._622au video[src]'), img => {
+                return; // can't do videos
                 if (img.getAttribute('data-uti')) return;
                 let thing = img.closest('article');
                 if (img && thing){
@@ -122,6 +126,7 @@
                     img.setAttribute('data-uti', '1');
                 }
             });
+            // stories
             [].forEach.call(document.querySelectorAll('img._7NpAS[srcset]  , video._ntjhp'), img => {
                 if (img.getAttribute('data-uti') == '1') return;
                 let srcset;
@@ -132,6 +137,7 @@
                         type = 'img';
                         break;
                     case 'VIDEO':
+                        return // can't do videos
                         srcset = img.querySelector('source').src;
                         type = 'vid';
                         break;
