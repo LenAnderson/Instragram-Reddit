@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.6
+// @version      0.7
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -19,7 +19,7 @@
 (function() {
     'use strict';
 
-    let sr = 'LenAndersonSaves';
+    let sr = 'FrankBank';
     let popup;
 
 
