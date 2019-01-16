@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.7
+// @version      0.8
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -81,6 +81,7 @@
 
 
     if (location.href.search(/^https:\/\/www\.instagram\.com/i) == 0) {
+        let btns = [];
         let addSaveButtons = () => {
             // feed / profile (images)
             //[].forEach.call(document.querySelectorAll('article._8Rm4L img[srcset], article._622au img[srcset]'), img => {
@@ -90,8 +91,10 @@
                 if (img && thing) {
                     let srcset = img.getAttribute('srcset').split(',').pop().split(' ')[0];
                     let header = thing.querySelector('header');
-                    [].forEach.call(header.querySelectorAll('.uti-btn'), oldBtn => oldBtn.remove());
+                    //[].forEach.call(header.querySelectorAll('.uti-btn'), oldBtn => oldBtn.remove());
                     let btn = document.createElement('button');
+                    btns.push(btn);
+                    btn.img = img;
                     btn.classList.add('uti-btn');
                     btn.textContent = 'imgur';
                     btn.addEventListener('click', () => {
@@ -99,7 +102,8 @@
                     });
                     btn.style.position = 'absolute';
                     btn.style.top = '10px';
-                    btn.style.right = '10px';
+                    let li = img.closest('li');
+                    btn.style.right = `${10 - (li ? li.offsetLeft : 0)}px`;
                     header.appendChild(btn);
                     img.setAttribute('data-uti', '1');
                 }
@@ -157,6 +161,12 @@
         };
         var mo = new MutationObserver(function(muts) {
             addSaveButtons();
+            btns.forEach(btn=>{
+                let li = btn.img.closest('li');
+                let slide = btn.img.closest('.MreMs');
+                let offset = Number(slide ? slide.style.transform.replace(/^.*translateX\(([\-\d]+)px\).*$/, '$1') : 0);
+                btn.style.right = `${10 - offset - (li ? li.offsetLeft : 0)}px`;
+            });
         });
         mo.observe(document.body, {childList: true, subtree: true, attributes:true});
     }
