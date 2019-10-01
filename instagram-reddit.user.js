@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.8
+// @version      0.9
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -48,14 +48,13 @@
 
 
     let addUpload = (type, title, url) => {
-        if (type == 'vid') return;
         if (popup && !popup.closed) {
-            console.log('adding to queue');
+            console.log('adding to queue', type, title, url);
             let queue = getQueue();
             queue.push({type:type, title:title, url:url});
             setQueue(queue);
         } else {
-            console.log('starting upload');
+            console.log('starting upload', type, title, url);
             startUpload(type, title, url);
         }
     };
@@ -66,7 +65,9 @@
     };
     let continueUpload = () => {
         let queue = getQueue();
+        console.log('QUEUE', queue);
         if (queue.length > 0) {
+            console.log('NEXT');
             let item = queue.shift();
             setQueue(queue);
             if (item.type == 'vid') return continueUpload();
@@ -74,6 +75,7 @@
             GM_setValue('uti_title', item.title);
             location.href = imgurl;
         } else {
+            console.log('CLOSING');
             window.close();
         }
     };
@@ -109,12 +111,11 @@
                 }
             });
             // feed / profile (videos)
-            [].forEach.call(document.querySelectorAll('article._622au video[src]'), img => {
-                return; // can't do videos
+            [].forEach.call(document.querySelectorAll('article._8Rm4L video[src]'), img => {
                 if (img.getAttribute('data-uti')) return;
                 let thing = img.closest('article');
                 if (img && thing){
-                    let srcset = img.src;
+                    let srcset = thing.querySelector('.c-Yi7').href;
                     let header = thing.querySelector('header');
                     [].forEach.call(header.querySelectorAll('.uti-btn'), oldBtn => oldBtn.remove());
                     let btn = document.createElement('button');
@@ -196,15 +197,62 @@
 
     else if (window.name == 'uti' && location.href.search(/^https:\/\/gfycat\.com\/upload\?(?:url=)(http[^&]+)/i) == 0) {
         let url = decodeURIComponent(location.search.match(/(?:url=)(http[^&]+)/)[1]);
-        document.querySelector('.input-container > input[type="URL"]').value = url;
+        let xhr = new XMLHttpRequest();
+        let doCheck;
+        doCheck = (gfyname)=>{
+            return new Promise(resolve=>{
+                let check = new XMLHttpRequest();
+                check.open('GET', `https://api.gfycat.com/v1/gfycats/fetch/status/${gfyname}`, true);
+                check.addEventListener('load', ()=>{
+                    let resp = JSON.parse(check.responseText);
+                    if (resp.task == 'complete') {
+                        console.log('COMPLETE', check.responseText);
+                        resolve();
+                    } else {
+                        console.log(check.responseText);
+                        setTimeout(()=>doCheck(gfyname).then(()=>resolve()), 1000);
+                    }
+                });
+                check.send();
+            });
+        };
+        xhr.open('POST', 'https://api.gfycat.com/v1/gfycats', true);
+        xhr.setRequestHeader('content-type', 'application/json');
+        xhr.addEventListener('load', ()=>{
+            let response = JSON.parse(xhr.responseText);
+            if (response.isOk) {
+                doCheck(response.gfyname).then(()=>{
+                    console.log('RESOLVED');
+                    GM_setValue('uti', '1');
+                    location.href = `https://www.reddit.com/r/${sr}/submit?url=${encodeURIComponent('https://gfycat.com/')}${response.gfyname}`;
+                });
+            } else {
+                console.warn('USERSCRIPT', response);
+            }
+        });
+        xhr.send(JSON.stringify({
+            fetchUrl: url,
+            keepAudio: false,
+            nsfw: true,
+            private: false,
+            tags: [GM_getValue('uti_title')],
+            title: GM_getValue('uti_title'),
+            cut: {
+                start: 0,
+                duration: 60
+            }
+        }));
     }
 
     else if (window.name == 'uti' && location.href.search(/^https:\/\/www\.reddit\.com/i) == 0 && GM_getValue('uti') == '1') {
+        console.log('reddit submit', GM_getValue('uti_title'));
         GM_setValue('uti', null);
         document.querySelector('#title-field textarea').value = '[insta] ' + GM_getValue('uti_title');
         document.querySelector('#newlink button.btn[name="submit"]').click();
     }
     else if (window.name == 'uti' && location.href.search(/^https:\/\/www\.reddit\.com\/.+\/comments\//i) == 0) {
         continueUpload();
+    } else if (window.name == 'uti') {
+        console.log('WHAT??', GM_getValue('uti_title'), GM_getValue('uti'), location.href);
     }
 })();
