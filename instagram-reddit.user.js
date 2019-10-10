@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.10
+// @version      0.11
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -132,7 +132,7 @@
                 }
             });
             // stories
-            [].forEach.call(document.querySelectorAll('img._7NpAS[srcset]  , video._ntjhp'), img => {
+            [].forEach.call(document.querySelectorAll('img.i1HvM[srcset]  , video.OFkrO'), img => {
                 if (img.getAttribute('data-uti') == '1') return;
                 let srcset;
                 let type;
@@ -142,7 +142,6 @@
                         type = 'img';
                         break;
                     case 'VIDEO':
-                        return // can't do videos
                         srcset = img.querySelector('source').src;
                         type = 'vid';
                         break;
