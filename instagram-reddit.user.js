@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.11
+// @version      0.12
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -11,6 +11,7 @@
 // @match        https://gfycat.com/*
 // @match        https://www.reddit.com/r/*/submit?url=*
 // @match        https://www.reddit.com/r/*/comments/*
+// @match        https://twitter.com/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -169,6 +170,44 @@
             });
         });
         mo.observe(document.body, {childList: true, subtree: true, attributes:true});
+    }
+
+    else if (location.href.search(/^https:\/\/twitter.com\//i) == 0) {
+        console.log('[UTI]', 'twitter');
+        const btns = [];
+        let adding = false;
+        function addSaveButtons() {
+            if (adding) return;
+            adding = true;
+            console.log('addSvBtn');
+            Array.from(document.querySelectorAll('[aria-modal] [aria-label="Image"] > img')).forEach(img=>{
+                if (img.getAttribute('data-uti') == '1') return;
+                img.setAttribute('data-uti', 1);
+                let src;
+                let type;
+                let obtn = img.closest('[aria-modal]').querySelector('[aria-label="More"]');
+                switch (img.tagName) {
+                    case 'IMG':
+                        src = img.src;
+                        type = 'img';
+                        break;
+                }
+                let btn = document.createElement('button');
+                btn.textContent = 'imgur';
+                btn.addEventListener('click', ()=>{
+                    addUpload(type, 'twitter', src);
+                });
+                obtn.parentElement.appendChild(btn);
+                btns.push(btn);
+            });
+            adding = false;
+        }
+        const mo = new MutationObserver(muts=>{
+            addSaveButtons();
+            btns.forEach(btn=>{
+            });
+        });
+        mo.observe(document.body, {childList:true, subtree:true, attributes:true});
     }
 
     else if (window.name == 'uti' && location.href.search(/^https:\/\/imgur\.com\/upload\?(?:url=)(http[^&]+)/i) == 0) {
