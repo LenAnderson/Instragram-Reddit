@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.12
+// @version      0.13
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -39,6 +39,7 @@
     };
 
     let makeImgurl = (type, url) => {
+        console.log('makeImgurl', url);
         switch (type) {
             case 'img':
                 return 'https://imgur.com/upload?url=' + encodeURIComponent(url);
@@ -101,7 +102,7 @@
                     btn.classList.add('uti-btn');
                     btn.textContent = 'imgur';
                     btn.addEventListener('click', () => {
-                        addUpload('img', header.querySelector('a.notranslate').textContent.trim(), srcset);
+                        addUpload('img', header.querySelector('a.ZIAjV').textContent.trim(), srcset);
                     });
                     btn.style.position = 'absolute';
                     btn.style.top = '10px';
@@ -123,7 +124,7 @@
                     btn.classList.add('uti-btn');
                     btn.textContent = 'imgur';
                     btn.addEventListener('click', () => {
-                        addUpload('vid', header.querySelector('a.notranslate').textContent.trim(), srcset);
+                        addUpload('vid', header.querySelector('a.ZIAjV').textContent.trim(), srcset);
                     });
                     btn.style.position = 'absolute';
                     btn.style.top = '10px';
