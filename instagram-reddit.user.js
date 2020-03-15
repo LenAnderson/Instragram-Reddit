@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.14
+// @version      0.15
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -106,7 +106,7 @@
                     });
                     btn.style.position = 'absolute';
                     btn.style.top = '10px';
-                    let li = img.closest('li');
+                    let li = img.closest('.ZyFrc');
                     btn.style.right = `${10 - (li ? li.offsetLeft : 0)}px`;
                     li.appendChild(btn);
                     img.setAttribute('data-uti', '1');
@@ -128,8 +128,9 @@
                     });
                     btn.style.position = 'absolute';
                     btn.style.top = '10px';
-                    btn.style.right = '10px';
-                    header.appendChild(btn);
+                    let li = img.closest('.kPFhm');
+                    btn.style.right = `${10 - (li ? li.offsetLeft : 0)}px`;
+                    li.appendChild(btn);
                     img.setAttribute('data-uti', '1');
                 }
             });
@@ -243,8 +244,13 @@
                 let check = new XMLHttpRequest();
                 check.open('GET', `https://api.gfycat.com/v1/gfycats/fetch/status/${gfyname}`, true);
                 check.addEventListener('load', ()=>{
-                    let resp = JSON.parse(check.responseText);
-                    if (resp.task == 'complete') {
+                    let response = {};
+                    try {
+                        response = JSON.parse(check.responseText);
+                    } catch (ex) {
+                        console.warn(ex);
+                    }
+                    if (response.task == 'complete') {
                         console.log('COMPLETE', check.responseText);
                         resolve();
                     } else {
@@ -258,7 +264,12 @@
         xhr.open('POST', 'https://api.gfycat.com/v1/gfycats', true);
         xhr.setRequestHeader('content-type', 'application/json');
         xhr.addEventListener('load', ()=>{
-            let response = JSON.parse(xhr.responseText);
+            let response = {};
+            try {
+                response = JSON.parse(xhr.responseText);
+            } catch (ex) {
+                console.warn(ex);
+            }
             if (response.isOk) {
                 doCheck(response.gfyname).then(()=>{
                     console.log('RESOLVED');
