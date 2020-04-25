@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.15
+// @version      0.16
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -178,6 +178,7 @@
         console.log('[UTI]', 'twitter');
         const btns = [];
         let adding = false;
+        let twitterCount = 0;
         function addSaveButtons() {
             if (adding) return;
             adding = true;
@@ -187,15 +188,17 @@
                 img.setAttribute('data-uti', 1);
                 let src;
                 let type;
-                let obtn = img.closest('[aria-modal]').querySelector('[aria-label="More"]');
+                let obtn = img.closest('[aria-modal]').querySelector('[aria-label="More"],[aria-label="View Tweet"]');
                 switch (img.tagName) {
                     case 'IMG':
-                        src = img.src;
+                        src = img.src.replace(/&name=[^&]+/, '');
                         type = 'img';
                         break;
                 }
+                img.title = twitterCount;
                 let btn = document.createElement('button');
-                btn.textContent = 'imgur';
+                btn.textContent = `imgur: ${twitterCount++}`;
+                btn.title = src;
                 btn.addEventListener('click', ()=>{
                     addUpload(type, 'twitter', src);
                 });
