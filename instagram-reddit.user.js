@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.16
+// @version      0.17
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -233,7 +233,7 @@
         let url = decodeURIComponent(location.search.match(/(?:url=)(http[^&]+)/)[1]);
     }
     else if (window.name == 'uti' && location.href.search(/^https:\/\/imgur\.com\//i) == 0 && GM_getValue('uti') == '1') {
-        let src = document.querySelector('.post-image-placeholder, .post-image-container > .post-image > img').src;
+        let src = document.querySelector('.post-image-placeholder, .post-image-container > .post-image img').src;
         src = src.replace(/\/([a-zA-Z0-9]{7})(?:[hrlgmtbs]|_d)(\.[^/.?]*)$/, "/$1$2");
         location.href = 'https://www.reddit.com/r/' + sr + '/submit?url=' + encodeURIComponent(src);
     }
