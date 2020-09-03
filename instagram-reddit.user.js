@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.17
+// @version      0.18
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -17,11 +17,13 @@
 // @grant        GM_getValue
 // ==/UserScript==
 
-(function() {
+(async function() {
     'use strict';
 
     let sr = 'FrankBank';
     let popup;
+
+    const wait = async(millis)=>{return new Promise(resolve=>setTimeout(resolve,millis));};
 
 
 
@@ -233,8 +235,14 @@
         let url = decodeURIComponent(location.search.match(/(?:url=)(http[^&]+)/)[1]);
     }
     else if (window.name == 'uti' && location.href.search(/^https:\/\/imgur\.com\//i) == 0 && GM_getValue('uti') == '1') {
-        let src = document.querySelector('.post-image-placeholder, .post-image-container > .post-image img').src;
+        let srcEl = null;
+        while (!srcEl) {
+            srcEl = document.querySelector('.post-image-placeholder, .post-image-container > .post-image img, .image-placeholder, .image-container > .image img');
+            await wait(100);
+        }
+        let src = srcEl.src;
         src = src.replace(/\/([a-zA-Z0-9]{7})(?:[hrlgmtbs]|_d)(\.[^/.?]*)$/, "/$1$2");
+        src = location.href;
         location.href = 'https://www.reddit.com/r/' + sr + '/submit?url=' + encodeURIComponent(src);
     }
 
