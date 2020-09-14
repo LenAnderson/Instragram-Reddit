@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.19
+// @version      0.20
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -235,14 +235,15 @@
         let url = decodeURIComponent(location.search.match(/(?:url=)(http[^&]+)/)[1]);
     }
     else if (window.name == 'uti' && location.href.search(/^https:\/\/imgur\.com\//i) == 0 && GM_getValue('uti') == '1') {
-        let srcEl = null;
-        while (!srcEl) {
-            srcEl = document.querySelector('.post-image-placeholder, .post-image-container > .post-image img, .image-placeholder, .image-container > .image img, .PostContent-imageWrapper img');
-            await wait(100);
-        }
-        let src = srcEl.src;
-        src = src.replace(/\/([a-zA-Z0-9]{7})(?:[hrlgmtbs]|_d)(\.[^/.?]*)$/, "/$1$2");
+        //let srcEl = null;
+        //while (!srcEl) {
+        //    srcEl = document.querySelector('.post-image-placeholder, .post-image-container > .post-image img, .image-placeholder, .image-container > .image img, .PostContent-imageWrapper img');
+        //    await wait(100);
+        //}
+        //let src = srcEl.src;
+        //src = src.replace(/\/([a-zA-Z0-9]{7})(?:[hrlgmtbs]|_d)(\.[^/.?]*)$/, "/$1$2");
         //src = location.href;
+        let src = `${location.protocol}//${location.host.replace(/^imgur/,'i.imgur')}${location.pathname.replace(/(^\/[^.]+)$/, '$1.jpg')}`;
         location.href = 'https://www.reddit.com/r/' + sr + '/submit?url=' + encodeURIComponent(src);
     }
 
