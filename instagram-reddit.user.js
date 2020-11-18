@@ -2,7 +2,7 @@
 // @name         Instagram - Upload to Imgur and Save to Reddit
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/Instragram-Reddit/raw/master/instagram-reddit.user.js
-// @version      0.20
+// @version      0.21
 // @description  Instagram -> Imgur -> Reddit
 // @author       LenAnderson
 // @match        https://www.instagram.com
@@ -46,7 +46,8 @@
             case 'img':
                 return 'https://imgur.com/upload?url=' + encodeURIComponent(url);
             case 'vid':
-                return 'https://gfycat.com/upload?url=' + encodeURIComponent(url);
+				return window.open(url);
+                //return 'https://gfycat.com/upload?url=' + encodeURIComponent(url);
         }
     };
 
@@ -119,7 +120,8 @@
                 if (img.getAttribute('data-uti')) return;
                 let thing = img.closest('article');
                 if (img && thing){
-                    let srcset = thing.querySelector('.c-Yi7').href;
+                    //let srcset = thing.querySelector('.c-Yi7').href;
+					let srcset = img.src;
                     let header = thing.querySelector('header');
                     [].forEach.call(header.querySelectorAll('.uti-btn'), oldBtn => oldBtn.remove());
                     let btn = document.createElement('button');
@@ -130,7 +132,7 @@
                     });
                     btn.style.position = 'absolute';
                     btn.style.top = '10px';
-                    let li = img.closest('.kPFhm');
+                    let li = img.closest('.kPFhm, .B1JlO');
                     btn.style.right = `${10 - (li ? li.offsetLeft : 0)}px`;
                     li.appendChild(btn);
                     img.setAttribute('data-uti', '1');
